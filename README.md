@@ -22,3 +22,8 @@ To start the microservices:
 
 * Run ```docker-compose up``` from the parent directory, this will first build
   and then deploy the services.
+  
+API Documentation:
+
+* Company API is documented in [company_api.yaml](https://github.com/akhilgandhi/EStockMarketCaseStudy/blob/main/company_api.yaml)
+* StockPrice API is documented in [stockprice_api.yaml](https://github.com/akhilgandhi/EStockMarketCaseStudy/blob/main/stockprice_api.yaml)

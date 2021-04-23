@@ -1,0 +1,47 @@
+version: '3.9'
+
+# Services
+services:
+  eureka-service:
+    build:
+      context: ./EurekaMicroService
+      dockerfile: Dockerfile
+    image: eureka-service:v1
+    ports:
+    - 8761:8761
+    networks:
+      - backend
+
+  company-service:
+    build:
+      context: ./CompanyMicroService
+      dockerfile: Dockerfile
+    image: company-service:v1
+    ports:
+    - 8089:8089
+    restart: always
+    depends_on:
+      - eureka-service
+    environment:
+      EUREKA_SERVER: http://eureka-service:8761/eureka
+    networks:
+      - backend
+
+  stock-price-service:
+    build:
+      context: ./StockPriceMicroService
+      dockerfile: Dockerfile
+    image: stock-price-service:v1
+    ports:
+    - 8090:8090
+    restart: always
+    depends_on:
+      - eureka-service
+    environment:
+      EUREKA_SERVER: http://eureka-service:8761/eureka
+    networks:
+      - backend
+
+# Network
+networks:
+  backend:

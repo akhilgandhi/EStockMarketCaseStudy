@@ -7,6 +7,7 @@ services:
       context: ./EurekaMicroService
       dockerfile: Dockerfile
     image: eureka-service:v1
+    container_name: eureka-service
     ports:
     - 8761:8761
     networks:
@@ -17,13 +18,18 @@ services:
       context: ./CompanyMicroService
       dockerfile: Dockerfile
     image: company-service:v1
+    container_name: company-service
     ports:
     - 8089:8089
     restart: always
     depends_on:
       - eureka-service
+      - company-mysql-db
     environment:
       EUREKA_SERVER: http://eureka-service:8761/eureka
+      SPRING_COMPANY_DATASOURCE_URL: jdbc:mysql://company-mysql-db:3308/companyDb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+      SPRING_COMPANY_DATASOURCE_USERNAME: appUser
+      SPRING_COMPANY_DATASOURCE_PASSWORD: appPass
     networks:
       - backend
 
@@ -32,13 +38,48 @@ services:
       context: ./StockPriceMicroService
       dockerfile: Dockerfile
     image: stock-price-service:v1
+    container_name: stock-price-service
     ports:
     - 8090:8090
     restart: always
     depends_on:
       - eureka-service
+      - stock-mysql-db
     environment:
       EUREKA_SERVER: http://eureka-service:8761/eureka
+      SPRING_STOCK_DATASOURCE_URL: jdbc:mysql://stock-mysql-db:3309/stockDb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+      SPRING_STOCK_DATASOURCE_USERNAME: appUser
+      SPRING_STOCK_DATASOURCE_PASSWORD: appPass
+    networks:
+      - backend
+
+  company-mysql-db:
+    image: mysql:latest
+    container_name: company-mysql-db
+    ports:
+      - 3308:3306
+    environment:
+      MYSQL_DATABASE: companyDb
+      MYSQL_USER: appUser
+      MYSQL_PASSWORD: appPass
+      MYSQL_ROOT_PASSWORD: rootPass
+    volumes:
+      - company-db-data:/var/lib/mysql
+    networks:
+      - backend
+
+  stock-mysql-db:
+    image: mysql:latest
+    container_name: stock-mysql-db
+    ports:
+      - 3309:3306
+    environment:
+      MYSQL_DATABASE: stockDb
+      MYSQL_USER: appUser
+      MYSQL_PASSWORD: appPass
+      MYSQL_ROOT_PASSWORD: rootPass
+    volumes:
+      - stock-db-data:/var/lib/mysql
     networks:
       - backend
 
@@ -68,6 +109,10 @@ services:
     networks:
       - backend
 
+# Volumes
+volumes:
+  company-db-data:
+  stock-db-data:
 
 # Network
 networks:

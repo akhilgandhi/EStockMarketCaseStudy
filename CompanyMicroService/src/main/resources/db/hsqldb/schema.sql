@@ -1,5 +1,4 @@
 DROP TABLE company IF EXISTS;
-DROP TABLE stock_price IF EXISTS;
 
 CREATE TABLE company (
     company_code        NUMERIC PRIMARY KEY,

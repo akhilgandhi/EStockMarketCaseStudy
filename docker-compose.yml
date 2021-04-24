@@ -42,6 +42,33 @@ services:
     networks:
       - backend
 
+  # management
+
+  grafana-service:
+    build:
+      context: ./MicroServiceManagement/grafana
+      dockerfile: Dockerfile
+    image: grafana-service
+    container_name: grafana-service
+    mem_limit: 256M
+    ports:
+    - 3000:3000
+    networks:
+      - backend
+
+  prometheus-service:
+    build:
+      context: ./MicroServiceManagement/prometheus
+      dockerfile: Dockerfile
+    image: prometheus-service
+    container_name: prometheus-service
+    mem_limit: 256M
+    ports:
+    - 9091:9090
+    networks:
+      - backend
+
+
 # Network
 networks:
   backend:
